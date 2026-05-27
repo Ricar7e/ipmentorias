@@ -765,23 +765,31 @@
 </style>
 </head><body>
 <script>
-/* Captura UTMs imediatamente e atualiza os links do CTA estático */
+/* Passagem de UTMs para o Typebot — independente do React e de cache.
+   Captura UTMs no load e intercepta cliques nos CTAs em fase de captura,
+   antes do handler do React, abrindo o Typebot com os parâmetros. */
 (function(){
   var KEYS=["utm_source","utm_medium","utm_campaign","utm_content","utm_term","utm_id"];
   var TYPEBOT="https://viewer.incorporacaonapratica.com/aplicacaomentoria";
   var p=new URLSearchParams(location.search);
-  var q=[];
-  KEYS.forEach(function(k){
-    var v=p.get(k);
-    if(v){sessionStorage.setItem(k,v);q.push(k+"="+encodeURIComponent(v));}
-  });
-  /* Atualiza hrefs dos botões estáticos antes do React carregar */
-  if(q.length){
-    var url=TYPEBOT+"?"+q.join("&");
-    document.addEventListener("DOMContentLoaded",function(){
-      document.querySelectorAll("a.cta-typebot").forEach(function(a){a.href=url;});
+  KEYS.forEach(function(k){var v=p.get(k);if(v)sessionStorage.setItem(k,v);});
+  function buildUrl(){
+    var q=[];
+    KEYS.forEach(function(k){
+      var v=sessionStorage.getItem(k)||new URLSearchParams(location.search).get(k);
+      if(v)q.push(k+"="+encodeURIComponent(v));
     });
+    return q.length?TYPEBOT+"?"+q.join("&"):TYPEBOT;
   }
+  document.addEventListener("click",function(e){
+    if(!e.target.closest)return;
+    var el=e.target.closest(".nav-cta,.btn-primary,a.cta-typebot");
+    if(!el)return;
+    if(el.closest(".modal-back")||el.closest(".modal"))return; /* ignora botões do modal */
+    e.preventDefault();
+    e.stopImmediatePropagation(); /* impede o handler do React de abrir um 2º */
+    window.open(buildUrl(),"_blank","noopener,noreferrer");
+  },true);
 })();
 </script>
 

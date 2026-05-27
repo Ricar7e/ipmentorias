@@ -765,31 +765,28 @@
 </style>
 </head><body>
 <script>
+/* Captura UTMs imediatamente e atualiza os links do CTA estático */
 (function(){
-  /* 1. Captura UTMs da URL imediatamente */
   var KEYS=["utm_source","utm_medium","utm_campaign","utm_content","utm_term","utm_id"];
-  var p=new URLSearchParams(location.search);
-  KEYS.forEach(function(k){var v=p.get(k);if(v)sessionStorage.setItem(k,v);});
-
-  /* 2. Intercepta window.open e injeta UTMs no link do Typebot */
   var TYPEBOT="https://viewer.incorporacaonapratica.com/aplicacaomentoria";
-  var _open=window.open.bind(window);
-  window.open=function(url,target,feat){
-    if(typeof url==="string"&&url.indexOf(TYPEBOT)===0){
-      var q=[];
-      KEYS.forEach(function(k){
-        var v=sessionStorage.getItem(k)||new URLSearchParams(location.search).get(k);
-        if(v)q.push(k+"="+encodeURIComponent(v));
-      });
-      if(q.length)url=TYPEBOT+"?"+q.join("&");
-    }
-    return _open(url,target,feat);
-  };
+  var p=new URLSearchParams(location.search);
+  var q=[];
+  KEYS.forEach(function(k){
+    var v=p.get(k);
+    if(v){sessionStorage.setItem(k,v);q.push(k+"="+encodeURIComponent(v));}
+  });
+  /* Atualiza hrefs dos botões estáticos antes do React carregar */
+  if(q.length){
+    var url=TYPEBOT+"?"+q.join("&");
+    document.addEventListener("DOMContentLoaded",function(){
+      document.querySelectorAll("a.cta-typebot").forEach(function(a){a.href=url;});
+    });
+  }
 })();
 </script>
 
 
-<div id="root"><nav class="nav"><div class="container nav-inner"><div class="brand"><div class="brand-mark">C</div><div class="brand-name">Carolina <em>Caribé</em></div></div><div class="nav-links"><a href="#programas">Programas</a><a href="#metodo">Método</a><a href="#carolina">Carolina</a><a href="#resultados">Resultados</a></div><button class="nav-cta">Aplicar agora</button></div></nav><section class="hero"><div class="hero-inner container"><div class="hero-eyebrow"><span class="dot">✦</span><span><strong>Vagas limitadas</strong></span></div><h1>Quem começa sem método aprende caro.<br>Quem escala sem método, <em>paga mais caro ainda.</em></h1><p class="hero-sub">Mentoria para incorporadores em qualquer estágio que querem tomar as decisões certas, com método e acompanhamento real.</p><div class="hero-ctas"><button class="btn-primary">Preencher formulário <span>→</span></button><a href="#metodo" class="btn-ghost">Ver o método</a></div><div class="hero-meta"><div class="hero-meta-item"><strong>350+</strong><span>INCORPORADORES MENTORADOS</span></div><div class="hero-meta-item"><strong>R$ 25 bi+</strong><span>VGV NO MERCADO BR</span></div><div class="hero-meta-item"><strong>18 anos</strong><span>NO MERCADO IMOBILIÁRIO</span></div></div></div></section></div>
+<div id="root"><nav class="nav"><div class="container nav-inner"><div class="brand"><div class="brand-mark">C</div><div class="brand-name">Carolina <em>Caribé</em></div></div><div class="nav-links"><a href="#programas">Programas</a><a href="#metodo">Método</a><a href="#carolina">Carolina</a><a href="#resultados">Resultados</a></div><a href="https://viewer.incorporacaonapratica.com/aplicacaomentoria" class="nav-cta cta-typebot" target="_blank" rel="noopener noreferrer">Aplicar agora</a></div></nav><section class="hero"><div class="hero-inner container"><div class="hero-eyebrow"><span class="dot">✦</span><span><strong>Vagas limitadas</strong></span></div><h1>Quem começa sem método aprende caro.<br>Quem escala sem método, <em>paga mais caro ainda.</em></h1><p class="hero-sub">Mentoria para incorporadores em qualquer estágio que querem tomar as decisões certas, com método e acompanhamento real.</p><div class="hero-ctas"><a href="https://viewer.incorporacaonapratica.com/aplicacaomentoria" class="btn-primary cta-typebot" target="_blank" rel="noopener noreferrer">Preencher formulário <span>→</span></a><a href="#metodo" class="btn-ghost">Ver o método</a></div><div class="hero-meta"><div class="hero-meta-item"><strong>350+</strong><span>INCORPORADORES MENTORADOS</span></div><div class="hero-meta-item"><strong>R$ 25 bi+</strong><span>VGV NO MERCADO BR</span></div><div class="hero-meta-item"><strong>18 anos</strong><span>NO MERCADO IMOBILIÁRIO</span></div></div></div></section></div>
 
 <script src="assets/app.min.js?v=2" defer></script>
 <!-- Meta Pixel deferred after page load -->

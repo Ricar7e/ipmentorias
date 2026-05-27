@@ -764,8 +764,10 @@
   .divider-dot { color: var(--text-mute); margin: 0 8px; }
 </style>
 </head><body>
-
-
+<script>
+/* Captura UTMs imediatamente ao carregar a página, antes de qualquer redirect */
+(function(){var p=new URLSearchParams(location.search),k=["utm_source","utm_medium","utm_campaign","utm_content","utm_term","utm_id"];k.forEach(function(n){var v=p.get(n);if(v)sessionStorage.setItem(n,v);});})();
+</script>
 
 
 <div id="root"><nav class="nav"><div class="container nav-inner"><div class="brand"><div class="brand-mark">C</div><div class="brand-name">Carolina <em>Caribé</em></div></div><div class="nav-links"><a href="#programas">Programas</a><a href="#metodo">Método</a><a href="#carolina">Carolina</a><a href="#resultados">Resultados</a></div><button class="nav-cta">Aplicar agora</button></div></nav><section class="hero"><div class="hero-inner container"><div class="hero-eyebrow"><span class="dot">✦</span><span><strong>Vagas limitadas</strong></span></div><h1>Quem começa sem método aprende caro.<br>Quem escala sem método, <em>paga mais caro ainda.</em></h1><p class="hero-sub">Mentoria para incorporadores em qualquer estágio que querem tomar as decisões certas, com método e acompanhamento real.</p><div class="hero-ctas"><button class="btn-primary">Preencher formulário <span>→</span></button><a href="#metodo" class="btn-ghost">Ver o método</a></div><div class="hero-meta"><div class="hero-meta-item"><strong>350+</strong><span>INCORPORADORES MENTORADOS</span></div><div class="hero-meta-item"><strong>R$ 25 bi+</strong><span>VGV NO MERCADO BR</span></div><div class="hero-meta-item"><strong>18 anos</strong><span>NO MERCADO IMOBILIÁRIO</span></div></div></div></section></div>

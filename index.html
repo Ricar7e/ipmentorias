@@ -765,8 +765,27 @@
 </style>
 </head><body>
 <script>
-/* Captura UTMs imediatamente ao carregar a página, antes de qualquer redirect */
-(function(){var p=new URLSearchParams(location.search),k=["utm_source","utm_medium","utm_campaign","utm_content","utm_term","utm_id"];k.forEach(function(n){var v=p.get(n);if(v)sessionStorage.setItem(n,v);});})();
+(function(){
+  /* 1. Captura UTMs da URL imediatamente */
+  var KEYS=["utm_source","utm_medium","utm_campaign","utm_content","utm_term","utm_id"];
+  var p=new URLSearchParams(location.search);
+  KEYS.forEach(function(k){var v=p.get(k);if(v)sessionStorage.setItem(k,v);});
+
+  /* 2. Intercepta window.open e injeta UTMs no link do Typebot */
+  var TYPEBOT="https://viewer.incorporacaonapratica.com/aplicacaomentoria";
+  var _open=window.open.bind(window);
+  window.open=function(url,target,feat){
+    if(typeof url==="string"&&url.indexOf(TYPEBOT)===0){
+      var q=[];
+      KEYS.forEach(function(k){
+        var v=sessionStorage.getItem(k)||new URLSearchParams(location.search).get(k);
+        if(v)q.push(k+"="+encodeURIComponent(v));
+      });
+      if(q.length)url=TYPEBOT+"?"+q.join("&");
+    }
+    return _open(url,target,feat);
+  };
+})();
 </script>
 
 

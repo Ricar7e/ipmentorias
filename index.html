@@ -766,29 +766,27 @@
 </head><body>
 <script>
 /* Passagem de UTMs para o Typebot — independente do React e de cache.
-   Captura UTMs no load e intercepta cliques nos CTAs em fase de captura,
-   antes do handler do React, abrindo o Typebot com os parâmetros. */
+   Captura as UTMs no carregamento (congeladas numa variável, antes de qualquer
+   manipulação de URL) e intercepta o clique nos CTAs em fase de captura,
+   antes do handler do React, abrindo o Typebot já com os parâmetros. */
 (function(){
   var KEYS=["utm_source","utm_medium","utm_campaign","utm_content","utm_term","utm_id"];
   var TYPEBOT="https://viewer.incorporacaonapratica.com/aplicacaomentoria";
-  var p=new URLSearchParams(location.search);
-  KEYS.forEach(function(k){var v=p.get(k);if(v)sessionStorage.setItem(k,v);});
-  function buildUrl(){
-    var q=[];
-    KEYS.forEach(function(k){
-      var v=sessionStorage.getItem(k)||new URLSearchParams(location.search).get(k);
-      if(v)q.push(k+"="+encodeURIComponent(v));
-    });
-    return q.length?TYPEBOT+"?"+q.join("&"):TYPEBOT;
-  }
+  var q=[];
+  try{
+    var p=new URLSearchParams(location.search);
+    KEYS.forEach(function(k){var v=p.get(k);if(v)q.push(k+"="+encodeURIComponent(v));});
+  }catch(_){}
+  var URL_FINAL=q.length?TYPEBOT+"?"+q.join("&"):TYPEBOT;
   document.addEventListener("click",function(e){
-    if(!e.target.closest)return;
-    var el=e.target.closest(".nav-cta,.btn-primary,a.cta-typebot");
+    var t=e.target;
+    if(!t||!t.closest)return;
+    var el=t.closest(".nav-cta,.btn-primary,a.cta-typebot");
     if(!el)return;
     if(el.closest(".modal-back")||el.closest(".modal"))return; /* ignora botões do modal */
     e.preventDefault();
     e.stopImmediatePropagation(); /* impede o handler do React de abrir um 2º */
-    window.open(buildUrl(),"_blank","noopener,noreferrer");
+    window.open(URL_FINAL,"_blank","noopener,noreferrer");
   },true);
 })();
 </script>
